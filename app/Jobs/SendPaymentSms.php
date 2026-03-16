@@ -34,7 +34,7 @@ class SendPaymentSms implements ShouldQueue
             $smsService->sendSms($this->guardianNumber, $this->message);
             
         } catch (Exception $e) {
-            Log::error('❌ SMS sending failed', [
+            Log::error('SMS sending failed', [
                 'guardian_number' => $this->guardianNumber,
                 'attempt' => $this->attempts(),
                 'error' => $e->getMessage(),
@@ -46,7 +46,7 @@ class SendPaymentSms implements ShouldQueue
 
     public function failed(Exception $exception)
     {
-        Log::error('💥 SMS job permanently failed after ' . $this->attempts() . ' attempts', [
+        Log::error('SMS job permanently failed after ' . $this->attempts() . ' attempts', [
             'guardian_number' => $this->guardianNumber,
             'error' => $exception->getMessage()
         ]);
