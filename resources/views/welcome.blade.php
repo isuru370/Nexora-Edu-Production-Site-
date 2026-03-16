@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YES Higher Education · welcome</title>
+    <title>NEXORA EDUCATION · welcome</title>
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,300&display=swap"
@@ -324,13 +324,13 @@
         <!-- logo container – your red logo will pop against the clean background -->
         <div class="logo-container">
             <!-- using asset helper – logo.png is assumed to be red -->
-            <img src="{{ asset('uploads/logo/logo.png') }}" alt="YES Higher Education red logo" class="logo"
+            <img src="{{ asset('uploads/logo/black_logo.png') }}" alt="NEXORA Education red logo" class="logo"
                 onerror="this.src='https://placehold.co/320x120/b91c1c/white?text=YES+Logo&font=inter';">
         </div>
 
         <h1>
             <span>Welcome to</span>
-            <span class="accent">YES Higher Education</span>
+            <span class="accent">NEXORA EDUCATION</span>
         </h1>
 
         <p class="tagline">
