@@ -833,10 +833,10 @@
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <small>&copy; 2025 AlokaIt Software Soluation. All rights reserved.</small>
+                    <small>&copy; 2026 Nexora IT Software Soluation. All rights reserved.</small>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <small>Version 2.1.0</small>
+                    <small>Version 2.2.5</small>
                 </div>
             </div>
         </div>
