@@ -785,26 +785,26 @@
                     }[type] || 'fa-info-circle';
 
                     toast.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: ${bgColor};
-                        color: white;
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                        z-index: 999999;
-                        animation: slideIn 0.3s ease-out;
-                        font-size: 0.875rem;
-                        font-weight: 500;
-                    `;
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: ${bgColor};
+                            color: white;
+                            padding: 12px 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                            z-index: 999999;
+                            animation: slideIn 0.3s ease-out;
+                            font-size: 0.875rem;
+                            font-weight: 500;
+                        `;
 
                     toast.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <i class="fas ${icon} me-2"></i>
-                            <span>${message}</span>
-                        </div>
-                    `;
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas ${icon} me-2"></i>
+                                <span>${message}</span>
+                            </div>
+                        `;
 
                     document.body.appendChild(toast);
 
@@ -834,23 +834,6 @@
                         return false; // Default to false if no setting found
                     } catch (error) {
                         console.error('Error checking printing status:', error);
-                        return false;
-                    }
-                },
-
-                checkEmailEnabled() {
-                    try {
-                        const emailSettings = localStorage.getItem('email_enabled');
-                        if (emailSettings) {
-                            const settings = JSON.parse(emailSettings);
-                            return settings.email_enabled === true;
-                        }
-                        if (typeof window.getEmailStatus === 'function') {
-                            return window.getEmailStatus();
-                        }
-                        return false;
-                    } catch (error) {
-                        console.error('Error checking email status:', error);
                         return false;
                     }
                 },
@@ -1178,11 +1161,11 @@
 
                 if (state.teacherData.classes.length === 0) {
                     elements.classesCards.innerHTML = `
-                        <div class="col-12 text-center py-4">
-                            <i class="fas fa-chalkboard-teacher fa-2x text-muted mb-3"></i>
-                            <p class="text-muted">No classes found for this teacher.</p>
-                        </div>
-                    `;
+                            <div class="col-12 text-center py-4">
+                                <i class="fas fa-chalkboard-teacher fa-2x text-muted mb-3"></i>
+                                <p class="text-muted">No classes found for this teacher.</p>
+                            </div>
+                        `;
                     return;
                 }
 
@@ -1207,60 +1190,60 @@
                     const card = document.createElement('div');
                     card.className = 'col-md-6 col-lg-3 mb-3';
                     card.innerHTML = `
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-header bg-white border-bottom py-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0 small fw-bold text-truncate" title="${cls.class_name || 'Class'}">
-                                        ${cls.class_name || 'Class'}
-                                    </h6>
-                                    <span class="badge bg-primary">Grade ${cls.grade_name || 'N/A'}</span>
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-bottom py-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 small fw-bold text-truncate" title="${cls.class_name || 'Class'}">
+                                            ${cls.class_name || 'Class'}
+                                        </h6>
+                                        <span class="badge bg-primary">Grade ${cls.grade_name || 'N/A'}</span>
+                                    </div>
+                                    <small class="text-muted">${cls.subject_name || 'Subject'}</small>
                                 </div>
-                                <small class="text-muted">${cls.subject_name || 'Subject'}</small>
-                            </div>
-                            <div class="card-body">
-                                <!-- Students Stats -->
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted small">Students:</span>
-                                        <span class="fw-bold small">${utils.formatNumber(totalStudents)}</span>
-                                    </div>
-                                    <div class="progress mb-1" style="height: 6px;">
-                                        <div class="progress-bar bg-success" style="width: ${percentagePaid}%"></div>
-                                    </div>
-                                    <div class="row small text-center">
-                                        <div class="col-4">
-                                            <span class="text-success fw-bold">${utils.formatNumber(paidStudents)}</span>
-                                            <div class="text-muted">Paid</div>
+                                <div class="card-body">
+                                    <!-- Students Stats -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted small">Students:</span>
+                                            <span class="fw-bold small">${utils.formatNumber(totalStudents)}</span>
                                         </div>
-                                        <div class="col-4">
-                                            <span class="text-danger fw-bold">${utils.formatNumber(unpaidStudents)}</span>
-                                            <div class="text-muted">Unpaid</div>
+                                        <div class="progress mb-1" style="height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: ${percentagePaid}%"></div>
                                         </div>
-                                        <div class="col-4">
-                                            <span class="text-info fw-bold">${utils.formatNumber(freeCardStudents)}</span>
-                                            <div class="text-muted">Free</div>
+                                        <div class="row small text-center">
+                                            <div class="col-4">
+                                                <span class="text-success fw-bold">${utils.formatNumber(paidStudents)}</span>
+                                                <div class="text-muted">Paid</div>
+                                            </div>
+                                            <div class="col-4">
+                                                <span class="text-danger fw-bold">${utils.formatNumber(unpaidStudents)}</span>
+                                                <div class="text-muted">Unpaid</div>
+                                            </div>
+                                            <div class="col-4">
+                                                <span class="text-info fw-bold">${utils.formatNumber(freeCardStudents)}</span>
+                                                <div class="text-muted">Free</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Financial Stats -->
-                                <div class="border-top pt-2">
-                                    <div class="mb-1">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted small">Total:</span>
-                                            <span class="fw-bold small">${utils.formatCurrency(totalCollection)}</span>
+                                    <!-- Financial Stats -->
+                                    <div class="border-top pt-2">
+                                        <div class="mb-1">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted small">Total:</span>
+                                                <span class="fw-bold small">${utils.formatCurrency(totalCollection)}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="mb-1">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted small">Teacher (${teacherPercentage}%):</span>
-                                            <span class="fw-bold text-success small">${utils.formatCurrency(teacherShare)}</span>
+                                        <div class="mb-1">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted small">Teacher (${teacherPercentage}%):</span>
+                                                <span class="fw-bold text-success small">${utils.formatCurrency(teacherShare)}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
 
                     elements.classesCards.appendChild(card);
                 });
@@ -1383,16 +1366,16 @@
                     const institutionPercentageForRow = 100 - teacherPercentageForRow;
 
                     rowHTML += `
-                        <td class="fw-bold text-primary">${utils.formatCurrency(dayData.totalCollection)}</td>
-                        <td class="text-secondary">
-                            ${utils.formatCurrency(dailyInstitutionShare)}
-                            <small class="d-block">(${institutionPercentageForRow.toFixed(1)}%)</small>
-                        </td>
-                        <td class="fw-bold text-success">
-                            ${utils.formatCurrency(dailyTeacherShare)}
-                            <small class="d-block">(${teacherPercentageForRow.toFixed(1)}%)</small>
-                        </td>
-                    `;
+                            <td class="fw-bold text-primary">${utils.formatCurrency(dayData.totalCollection)}</td>
+                            <td class="text-secondary">
+                                ${utils.formatCurrency(dailyInstitutionShare)}
+                                <small class="d-block">(${institutionPercentageForRow.toFixed(1)}%)</small>
+                            </td>
+                            <td class="fw-bold text-success">
+                                ${utils.formatCurrency(dailyTeacherShare)}
+                                <small class="d-block">(${teacherPercentageForRow.toFixed(1)}%)</small>
+                            </td>
+                        `;
 
                     row.innerHTML = rowHTML;
                     elements.paymentTableBody.appendChild(row);
@@ -1421,14 +1404,14 @@
                 if (!elements.paymentTableHeader) return;
 
                 elements.paymentTableHeader.innerHTML = `
-                    <tr>
-                        <th class="py-2">Date</th>
-                        ${state.allGrades.map(grade => `<th class="py-2">Grade ${grade}</th>`).join('')}
-                        <th class="py-2 text-primary">Total</th>
-                        <th class="py-2 text-secondary">Institution</th>
-                        <th class="py-2 text-success">Teacher</th>
-                    </tr>
-                `;
+                        <tr>
+                            <th class="py-2">Date</th>
+                            ${state.allGrades.map(grade => `<th class="py-2">Grade ${grade}</th>`).join('')}
+                            <th class="py-2 text-primary">Total</th>
+                            <th class="py-2 text-secondary">Institution</th>
+                            <th class="py-2 text-success">Teacher</th>
+                        </tr>
+                    `;
             }
 
             // අලුත් කරපු renderTableFooter function එක
@@ -1436,22 +1419,22 @@
                 if (!elements.paymentTableFooter) return;
 
                 elements.paymentTableFooter.innerHTML = `
-                    <tr>
-                        <td class="fw-bold py-2">Totals</td>
-                        ${state.allGrades.map(grade => `
-                            <td class="fw-bold py-2">${utils.formatCurrency(totals.gradeTotals[grade] || 0)}</td>
-                        `).join('')}
-                        <td class="fw-bold py-2 text-primary">${utils.formatCurrency(totals.totalCollection)}</td>
-                        <td class="fw-bold py-2 text-secondary">
-                            ${utils.formatCurrency(totals.institutionShare)}
-                            <small class="d-block">(${institutionPercentage.toFixed(1)}%)</small>
-                        </td>
-                        <td class="fw-bold py-2 text-success">
-                            ${utils.formatCurrency(totals.teacherShare)}
-                            <small class="d-block">(${teacherPercentage.toFixed(1)}%)</small>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td class="fw-bold py-2">Totals</td>
+                            ${state.allGrades.map(grade => `
+                                <td class="fw-bold py-2">${utils.formatCurrency(totals.gradeTotals[grade] || 0)}</td>
+                            `).join('')}
+                            <td class="fw-bold py-2 text-primary">${utils.formatCurrency(totals.totalCollection)}</td>
+                            <td class="fw-bold py-2 text-secondary">
+                                ${utils.formatCurrency(totals.institutionShare)}
+                                <small class="d-block">(${institutionPercentage.toFixed(1)}%)</small>
+                            </td>
+                            <td class="fw-bold py-2 text-success">
+                                ${utils.formatCurrency(totals.teacherShare)}
+                                <small class="d-block">(${teacherPercentage.toFixed(1)}%)</small>
+                            </td>
+                        </tr>
+                    `;
             }
 
             function renderAdvancePayments() {
@@ -1467,22 +1450,22 @@
                     state.teacherData.advance_payment_records.forEach(record => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${utils.formatDateTime(record.date)}</td>
-                            <td class="fw-bold">${utils.formatCurrency(record.payment)}</td>
-                            <td>
-                                <span class="badge bg-info">
-                                    ${record.reason_code || 'N/A'}
-                                </span>
-                                ${record.reason ? `<br><small class="text-muted">${record.reason}</small>` : ''}
-                            </td>
-                            <td>${record.payment_for || 'N/A'}</td>
-                            <td>
-                                <span class="badge ${record.status ? 'bg-success' : 'bg-danger'}">
-                                    ${record.status ? 'Active' : 'Deleted'}
-                                </span>
-                            </td>
-                            <td>${record.user_name || 'System'}</td>
-                        `;
+                                <td>${utils.formatDateTime(record.date)}</td>
+                                <td class="fw-bold">${utils.formatCurrency(record.payment)}</td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        ${record.reason_code || 'N/A'}
+                                    </span>
+                                    ${record.reason ? `<br><small class="text-muted">${record.reason}</small>` : ''}
+                                </td>
+                                <td>${record.payment_for || 'N/A'}</td>
+                                <td>
+                                    <span class="badge ${record.status ? 'bg-success' : 'bg-danger'}">
+                                        ${record.status ? 'Active' : 'Deleted'}
+                                    </span>
+                                </td>
+                                <td>${record.user_name || 'System'}</td>
+                            `;
                         elements.advancePaymentsTableBody.appendChild(row);
                     });
 
@@ -1560,29 +1543,29 @@
                 const overlay = document.createElement('div');
                 overlay.id = 'printingOverlay';
                 overlay.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9999;
-                `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    `;
                 overlay.innerHTML = `
-                    <div style="
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        text-align: center;
-                    ">
-                        <i class="fas fa-print fa-2x text-primary mb-2"></i>
-                        <p style="margin: 10px 0 0 0; font-weight: 500;">Printing salary slip...</p>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Please check your print dialog</p>
-                    </div>
-                `;
+                        <div style="
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            text-align: center;
+                        ">
+                            <i class="fas fa-print fa-2x text-primary mb-2"></i>
+                            <p style="margin: 10px 0 0 0; font-weight: 500;">Printing salary slip...</p>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Please check your print dialog</p>
+                        </div>
+                    `;
                 document.body.appendChild(overlay);
             }
 
@@ -1597,98 +1580,98 @@
                 const modal = document.createElement('div');
                 modal.id = 'paymentConfirmation';
                 modal.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9998;
-                    backdrop-filter: blur(2px);
-                `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9998;
+                        backdrop-filter: blur(2px);
+                    `;
 
                 modal.innerHTML = `
-                    <div style="
-                        background: white;
-                        padding: 25px;
-                        border-radius: 12px;
-                        max-width: 400px;
-                        width: 90%;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                    ">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="
-                                width: 60px;
-                                height: 60px;
-                                background: #4e73df;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                margin: 0 auto 15px;
-                            ">
-                                <i class="fas fa-money-check-alt" style="font-size: 24px; color: white;"></i>
-                            </div>
-                            <h5 style="margin: 0 0 5px 0; color: #333; font-weight: 600;">Confirm Payment</h5>
-                            <p style="color: #666; font-size: 14px; margin: 0;">Please review the payment details</p>
-                        </div>
-
                         <div style="
-                            background: #f8f9fc;
-                            padding: 15px;
-                            border-radius: 8px;
-                            margin-bottom: 20px;
+                            background: white;
+                            padding: 25px;
+                            border-radius: 12px;
+                            max-width: 400px;
+                            width: 90%;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
                         ">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e3e6f0;">
-                                <span style="color: #5a5c69; font-weight: 500;">Teacher:</span>
-                                <strong>${teacherName}</strong>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="
+                                    width: 60px;
+                                    height: 60px;
+                                    background: #4e73df;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 15px;
+                                ">
+                                    <i class="fas fa-money-check-alt" style="font-size: 24px; color: white;"></i>
+                                </div>
+                                <h5 style="margin: 0 0 5px 0; color: #333; font-weight: 600;">Confirm Payment</h5>
+                                <p style="color: #666; font-size: 14px; margin: 0;">Please review the payment details</p>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e3e6f0;">
-                                <span style="color: #5a5c69; font-weight: 500;">Amount:</span>
-                                <strong style="color: #1cc88a; font-size: 18px;">${utils.formatCurrency(amount)}</strong>
+
+                            <div style="
+                                background: #f8f9fc;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin-bottom: 20px;
+                            ">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e3e6f0;">
+                                    <span style="color: #5a5c69; font-weight: 500;">Teacher:</span>
+                                    <strong>${teacherName}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e3e6f0;">
+                                    <span style="color: #5a5c69; font-weight: 500;">Amount:</span>
+                                    <strong style="color: #1cc88a; font-size: 18px;">${utils.formatCurrency(amount)}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #5a5c69; font-weight: 500;">Period:</span>
+                                    <strong>${monthYear}</strong>
+                                </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: #5a5c69; font-weight: 500;">Period:</span>
-                                <strong>${monthYear}</strong>
+
+                            <div style="display: flex; gap: 10px;">
+                                <button id="confirmBtn" style="
+                                    background: #1cc88a;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 20px;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    flex: 1;
+                                    transition: all 0.3s;
+                                " onmouseover="this.style.backgroundColor='#17a673'" onmouseout="this.style.backgroundColor='#1cc88a'">
+                                    <i class="fas fa-check-circle me-1"></i> Confirm
+                                </button>
+
+                                <button id="cancelBtn" style="
+                                    background: #e74a3b;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 20px;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    flex: 1;
+                                    transition: all 0.3s;
+                                " onmouseover="this.style.backgroundColor='#d62c1a'" onmouseout="this.style.backgroundColor='#e74a3b'">
+                                    <i class="fas fa-times-circle me-1"></i> Cancel
+                                </button>
                             </div>
                         </div>
-
-                        <div style="display: flex; gap: 10px;">
-                            <button id="confirmBtn" style="
-                                background: #1cc88a;
-                                color: white;
-                                border: none;
-                                padding: 12px 20px;
-                                border-radius: 8px;
-                                cursor: pointer;
-                                font-size: 14px;
-                                font-weight: 600;
-                                flex: 1;
-                                transition: all 0.3s;
-                            " onmouseover="this.style.backgroundColor='#17a673'" onmouseout="this.style.backgroundColor='#1cc88a'">
-                                <i class="fas fa-check-circle me-1"></i> Confirm
-                            </button>
-
-                            <button id="cancelBtn" style="
-                                background: #e74a3b;
-                                color: white;
-                                border: none;
-                                padding: 12px 20px;
-                                border-radius: 8px;
-                                cursor: pointer;
-                                font-size: 14px;
-                                font-weight: 600;
-                                flex: 1;
-                                transition: all 0.3s;
-                            " onmouseover="this.style.backgroundColor='#d62c1a'" onmouseout="this.style.backgroundColor='#e74a3b'">
-                                <i class="fas fa-times-circle me-1"></i> Cancel
-                            </button>
-                        </div>
-                    </div>
-                `;
+                    `;
 
                 document.body.appendChild(modal);
 
@@ -1746,7 +1729,6 @@
                             hidePaymentProcessing();
 
                             const isPrintingEnabled = utils.checkPrintingEnabled();
-                            const isEmailEnabled = utils.checkEmailEnabled();
 
                             // PRINT SALARY SLIP if enabled in settings (NOT email)
                             if (isPrintingEnabled) {
@@ -1756,13 +1738,7 @@
                                 }, 500);
                             }
 
-                            // SEND EMAIL if email is enabled (different from printing)
-                            if (isEmailEnabled) {
-                                // This sends the payment email report
-                                sendEmailToTeacher(teacherId, monthYear);
-                            }
-
-                            showPaymentSuccess(data, teacherId, teacherName, amount, monthYear, isPrintingEnabled, isEmailEnabled);
+                            showPaymentSuccess(data, teacherId, teacherName, amount, monthYear, isPrintingEnabled);
 
                             // Refresh data
                             setTimeout(() => {
@@ -1888,20 +1864,19 @@
                 const overlay = document.createElement('div');
                 overlay.id = 'paymentProcessing';
                 overlay.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9999;
-                `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    `;
 
                 const isPrintingEnabled = utils.checkPrintingEnabled();
-                const isEmailEnabled = utils.checkEmailEnabled();
 
                 let printMessage = '';
                 let emailMessage = '';
@@ -1910,58 +1885,54 @@
                     printMessage = '<br>• Salary slip will be printed';
                 }
 
-                if (isEmailEnabled) {
-                    emailMessage = '<br>• Payment report will be emailed';
-                }
-
-                const featuresMessage = isPrintingEnabled || isEmailEnabled
+                const featuresMessage = isPrintingEnabled
                     ? `After payment:${printMessage}${emailMessage}`
                     : 'Payment will be processed (no additional actions)';
 
                 overlay.innerHTML = `
-                    <div style="
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        max-width: 300px;
-                        width: 90%;
-                        text-align: center;
-                    ">
-                        <div style="font-size: 30px; color: #4e73df; margin-bottom: 10px;">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                        <h5 style="margin-bottom: 15px; color: #333;">Processing Payment</h5>
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: #666;">Teacher:</span>
-                                <strong>${teacherName}</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: #666;">Amount:</span>
-                                <strong>${utils.formatCurrency(amount)}</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: #666;">Period:</span>
-                                <strong>${monthYear}</strong>
-                            </div>
-                        </div>
                         <div style="
-                            background: #e8f4fd;
-                            padding: 8px;
-                            border-radius: 4px;
-                            margin-top: 15px;
-                            border-left: 3px solid #4e73df;
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            max-width: 300px;
+                            width: 90%;
+                            text-align: center;
                         ">
-                            <p style="margin: 0; color: #2e59d9; font-size: 12px;">
-                                <i class="fas fa-info-circle me-1"></i>
-                                ${featuresMessage}
+                            <div style="font-size: 30px; color: #4e73df; margin-bottom: 10px;">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <h5 style="margin-bottom: 15px; color: #333;">Processing Payment</h5>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #666;">Teacher:</span>
+                                    <strong>${teacherName}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #666;">Amount:</span>
+                                    <strong>${utils.formatCurrency(amount)}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Period:</span>
+                                    <strong>${monthYear}</strong>
+                                </div>
+                            </div>
+                            <div style="
+                                background: #e8f4fd;
+                                padding: 8px;
+                                border-radius: 4px;
+                                margin-top: 15px;
+                                border-left: 3px solid #4e73df;
+                            ">
+                                <p style="margin: 0; color: #2e59d9; font-size: 12px;">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    ${featuresMessage}
+                                </p>
+                            </div>
+                            <p style="color: #666; font-size: 13px; margin: 10px 0 0 0;">
+                                Please wait...
                             </p>
                         </div>
-                        <p style="color: #666; font-size: 13px; margin: 10px 0 0 0;">
-                            Please wait...
-                        </p>
-                    </div>
-                `;
+                    `;
 
                 document.body.appendChild(overlay);
             }
@@ -1973,21 +1944,21 @@
                 }
             }
 
-            function showPaymentSuccess(data, teacherId, teacherName, amount, monthYear, isPrintingEnabled, isEmailEnabled) {
+            function showPaymentSuccess(data, teacherId, teacherName, amount, monthYear, isPrintingEnabled) {
                 const modal = document.createElement('div');
                 modal.id = 'paymentSuccess';
                 modal.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 99999;
-                `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 99999;
+                    `;
 
                 const formattedAmount = utils.formatCurrency(amount);
                 const paymentDate = new Date().toLocaleTimeString('en-LK', {
@@ -2001,130 +1972,99 @@
 
                 if (isPrintingEnabled) {
                     printStatusMessage = `
-                        <div style="
-                            background: #d4edda;
-                            padding: 8px;
-                            border-radius: 4px;
-                            margin-bottom: 8px;
-                            border-left: 3px solid #1cc88a;
-                        ">
-                            <p style="margin: 0; color: #155724; font-size: 12px;">
-                                <i class="fas fa-check-circle me-1"></i>
-                                Salary slip has been printed
-                            </p>
-                        </div>
-                    `;
+                            <div style="
+                                background: #d4edda;
+                                padding: 8px;
+                                border-radius: 4px;
+                                margin-bottom: 8px;
+                                border-left: 3px solid #1cc88a;
+                            ">
+                                <p style="margin: 0; color: #155724; font-size: 12px;">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Salary slip has been printed
+                                </p>
+                            </div>
+                        `;
                     actionsHTML += `
-                        <button id="printAgainBtn" style="
-                            background: #4e73df;
-                            color: white;
-                            border: none;
-                            padding: 8px 15px;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            font-size: 14px;
-                            flex: 1;
-                        ">
-                            <i class="fas fa-print me-1"></i> Print Slip Again
-                        </button>
-                    `;
-                }
-
-                if (isEmailEnabled) {
-                    emailStatusMessage = `
-                        <div style="
-                            background: #e8f4fd;
-                            padding: 8px;
-                            border-radius: 4px;
-                            margin-bottom: 15px;
-                            border-left: 3px solid #4e73df;
-                        ">
-                            <p style="margin: 0; color: #2e59d9; font-size: 12px;">
-                                <i class="fas fa-check-circle me-1"></i>
-                                Payment report has been emailed to teacher
-                            </p>
-                        </div>
-                    `;
-                    actionsHTML += `
-                        <button id="emailAgainBtn" style="
-                            background: #36b9cc;
-                            color: white;
-                            border: none;
-                            padding: 8px 15px;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            font-size: 14px;
-                            flex: 1;
-                        ">
-                            <i class="fas fa-envelope me-1"></i> Resend Email
-                        </button>
-                    `;
+                            <button id="printAgainBtn" style="
+                                background: #4e73df;
+                                color: white;
+                                border: none;
+                                padding: 8px 15px;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-size: 14px;
+                                flex: 1;
+                            ">
+                                <i class="fas fa-print me-1"></i> Print Slip Again
+                            </button>
+                        `;
                 }
 
                 actionsHTML += `
-                    <button id="closeBtn" style="
-                        background: #5a5c69;
-                        color: white;
-                        border: none;
-                        padding: 8px 15px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        flex: 1;
-                    ">
-                        Close
-                    </button>
-                `;
+                        <button id="closeBtn" style="
+                            background: #5a5c69;
+                            color: white;
+                            border: none;
+                            padding: 8px 15px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            flex: 1;
+                        ">
+                            Close
+                        </button>
+                    `;
 
                 modal.innerHTML = `
-                    <div style="
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        max-width: 400px;
-                        width: 90%;
-                    ">
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <div style="
-                                width: 50px;
-                                height: 50px;
-                                background: #1cc88a;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                margin: 0 auto 10px;
-                            ">
-                                <i class="fas fa-check" style="font-size: 20px; color: white;"></i>
+                        <div style="
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            max-width: 400px;
+                            width: 90%;
+                        ">
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <div style="
+                                    width: 50px;
+                                    height: 50px;
+                                    background: #1cc88a;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 10px;
+                                ">
+                                    <i class="fas fa-check" style="font-size: 20px; color: white;"></i>
+                                </div>
+                                <h5 style="margin: 0 0 5px 0; color: #1cc88a;">Payment Successful</h5>
+                                <p style="color: #666; font-size: 13px; margin: 0;">${teacherName}</p>
                             </div>
-                            <h5 style="margin: 0 0 5px 0; color: #1cc88a;">Payment Successful</h5>
-                            <p style="color: #666; font-size: 13px; margin: 0;">${teacherName}</p>
-                        </div>
 
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: #666;">Amount:</span>
-                                <strong style="color: #1cc88a;">${formattedAmount}</strong>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="color: #666;">Amount:</span>
+                                    <strong style="color: #1cc88a;">${formattedAmount}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="color: #666;">Period:</span>
+                                    <strong>${monthYear}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Time:</span>
+                                    <strong>${paymentDate}</strong>
+                                </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: #666;">Period:</span>
-                                <strong>${monthYear}</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: #666;">Time:</span>
-                                <strong>${paymentDate}</strong>
+
+                            <!--Status messages-->
+                            ${printStatusMessage}
+                            ${emailStatusMessage}
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                ${actionsHTML}
                             </div>
                         </div>
-
-                        <!--Status messages-->
-                        ${printStatusMessage}
-                        ${emailStatusMessage}
-
-                        <div style="display: flex; gap: 10px; margin-top: 20px;">
-                            ${actionsHTML}
-                        </div>
-                    </div>
-                `;
+                    `;
 
                 document.body.appendChild(modal);
 
@@ -2133,13 +2073,6 @@
                     document.getElementById('printAgainBtn').addEventListener('click', function () {
                         utils.openSalarySlip(teacherId, utils.currentYear, utils.currentMonth);
                         utils.showToast('Printing salary slip again...', 'info');
-                    });
-                }
-
-                if (isEmailEnabled) {
-                    document.getElementById('emailAgainBtn').addEventListener('click', function () {
-                        sendEmailToTeacher(teacherId, monthYear);
-                        utils.showToast('Payment report email sent again', 'success');
                     });
                 }
 
@@ -2163,61 +2096,61 @@
                 const modal = document.createElement('div');
                 modal.id = 'paymentError';
                 modal.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 99999;
-                `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 99999;
+                    `;
 
                 modal.innerHTML = `
-                    <div style="
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        max-width: 350px;
-                        width: 90%;
-                    ">
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <div style="font-size: 30px; color: #e74a3b; margin-bottom: 10px;">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <h5 style="margin: 0; color: #e74a3b;">Payment Failed</h5>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <p style="color: #721c24; font-size: 14px; margin: 0 0 10px 0;">
-                                ${errorMessage}
-                            </p>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: #666;">Teacher:</span>
-                                <strong>${teacherName}</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                                <span style="color: #666;">Amount:</span>
-                                <strong>${utils.formatCurrency(amount)}</strong>
-                            </div>
-                        </div>
-
-                        <button id="errorCloseBtn" style="
-                            background: #e74a3b;
-                            color: white;
-                            border: none;
-                            padding: 8px 20px;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            font-size: 14px;
-                            width: 100%;
+                        <div style="
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            max-width: 350px;
+                            width: 90%;
                         ">
-                            Try Again
-                        </button>
-                    </div>
-                `;
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <div style="font-size: 30px; color: #e74a3b; margin-bottom: 10px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h5 style="margin: 0; color: #e74a3b;">Payment Failed</h5>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p style="color: #721c24; font-size: 14px; margin: 0 0 10px 0;">
+                                    ${errorMessage}
+                                </p>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Teacher:</span>
+                                    <strong>${teacherName}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                                    <span style="color: #666;">Amount:</span>
+                                    <strong>${utils.formatCurrency(amount)}</strong>
+                                </div>
+                            </div>
+
+                            <button id="errorCloseBtn" style="
+                                background: #e74a3b;
+                                color: white;
+                                border: none;
+                                padding: 8px 20px;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-size: 14px;
+                                width: 100%;
+                            ">
+                                Try Again
+                            </button>
+                        </div>
+                    `;
 
                 document.body.appendChild(modal);
 
