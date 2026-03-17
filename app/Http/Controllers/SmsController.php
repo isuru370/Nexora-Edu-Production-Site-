@@ -16,12 +16,15 @@ class SmsController extends Controller
     }
 
     // Send Single SMS
-    public function send($number, $message)
-    {
-        $response = $this->smsService->sendSms($number, $message);
+public function send(Request $request)
+{
+    $number = $request->number;
+    $message = $request->message;
 
-        return response()->json($response);
-    }
+    $response = $this->smsService->sendSms($number, $message);
+
+    return response()->json($response);
+}
 
 
     // Send Bulk SMS
