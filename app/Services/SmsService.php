@@ -13,7 +13,7 @@ class SmsService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.sms.base_url', 'https://smsapi.chatbiz.net/v1'), '/');
+        $this->baseUrl = rtrim(config('services.sms.base_url') ?? 'https://smsapi.chatbiz.net/v1', '/');
         $this->userId = (string) config('services.sms.user_id');
         $this->apiKey = (string) config('services.sms.api_key');
         $this->senderId = (string) config('services.sms.sender_id');
@@ -25,22 +25,29 @@ class SmsService
         try {
             $recipient = $this->formatNumber($recipient);
 
-            $response = Http::asForm()
-                ->timeout(15)
-                ->post("{$this->baseUrl}/send", [
-                    'user_id' => $this->userId,
-                    'api_key' => $this->apiKey,
-                    'sender_id' => $this->senderId,
-                    'recipient_contact_no' => $recipient,
-                    'message' => $message,
-                ]);
+            $response = Http::timeout(15)->get("{$this->baseUrl}/send", [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'recipient_contact_no' => $recipient,
+                'message' => $message,
+            ]);
 
-            return $this->buildResponse($response);
+            return [
+                'success' => ($response->json()['status_code'] ?? null) == 204,
+                'http_status' => $response->status(),
+                'provider_status_code' => $response->json()['status_code'] ?? null,
+                'message_id' => $response->json()['msg_id'] ?? null,
+                'body' => $response->body(),
+                'json' => $response->json(),
+            ];
         } catch (\Throwable $e) {
-            return $this->exceptionResponse($e);
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
         }
     }
-
     // Bulk SMS
     public function sendBulkSms(array $numbers, string $message, string $campaign = 'LaravelCampaign'): array
     {
@@ -109,9 +116,22 @@ class SmsService
             ];
         }
 
+        $providerStatusCode = $body['status_code'] ?? null;
+
+        if ($providerStatusCode == 211) {
+            return [
+                'success' => false,
+                'http_status' => $response->status(),
+                'provider_status_code' => 211,
+                'error' => 'No Sender ID / Sender ID is not approved',
+                'data' => $body,
+            ];
+        }
+
         return [
             'success' => $response->successful(),
             'http_status' => $response->status(),
+            'provider_status_code' => $providerStatusCode,
             'data' => $body,
         ];
     }

@@ -9,44 +9,47 @@ class AddIndexesToStudentsPaymentsAndAttendancesTables extends Migration
     public function up()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->index('mobile');
-            $table->index('guardian_mobile');
-            $table->index('grade_id');
+            $table->index('mobile', 'students_mobile_idx'); // කෙටි නම්
+            $table->index('guardian_mobile', 'students_guardian_mobile_idx');
+            $table->index('grade_id', 'students_grade_id_idx');
         });
 
         Schema::table('payments', function (Blueprint $table) {
-            $table->index('payment_date');
-            $table->index(['student_id', 'payment_date']);
-            $table->index(['student_student_student_classes_id', 'payment_date']);
+            $table->index('payment_date', 'payments_date_idx');
+            
+            // කෙටි index names
+            $table->index(['student_id', 'payment_date'], 'payments_student_date_idx');
+            $table->index(['student_student_student_classes_id', 'payment_date'], 'payments_class_date_idx');
         });
 
         Schema::table('student_attendances', function (Blueprint $table) {
-            $table->index(['student_id', 'at_date']);
-            $table->index(['student_student_student_classes_id', 'at_date']);
+            // කෙටි index names
+            $table->index(['student_id', 'at_date'], 'attendance_student_date_idx');
+            $table->index(['student_student_student_classes_id', 'at_date'], 'attendance_class_date_idx');
 
-            // prevent duplicate attendance per session
-            $table->unique(['student_id', 'attendance_id']);
+            // unique constraint එකට කෙටි නමක්
+            $table->unique(['student_id', 'attendance_id'], 'attendance_student_unique');
         });
     }
 
     public function down()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropIndex(['mobile']);
-            $table->dropIndex(['guardian_mobile']);
-            $table->dropIndex(['grade_id']);
+            $table->dropIndex('students_mobile_idx');
+            $table->dropIndex('students_guardian_mobile_idx');
+            $table->dropIndex('students_grade_id_idx');
         });
 
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropIndex(['payment_date']);
-            $table->dropIndex(['student_id', 'payment_date']);
-            $table->dropIndex(['student_student_student_classes_id', 'payment_date']);
+            $table->dropIndex('payments_date_idx');
+            $table->dropIndex('payments_student_date_idx');
+            $table->dropIndex('payments_class_date_idx');
         });
 
         Schema::table('student_attendances', function (Blueprint $table) {
-            $table->dropIndex(['student_id', 'at_date']);
-            $table->dropIndex(['student_student_student_classes_id', 'at_date']);
-            $table->dropUnique(['student_id', 'attendance_id']);
+            $table->dropIndex('attendance_student_date_idx');
+            $table->dropIndex('attendance_class_date_idx');
+            $table->dropUnique('attendance_student_unique');
         });
     }
 }
