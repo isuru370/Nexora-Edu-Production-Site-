@@ -13,150 +13,128 @@ class SmsService
 
     public function __construct()
     {
-        $this->baseUrl = 'https://smsapi.chatbiz.net/v1';
-        $this->userId = config('services.sms.user_id');
-        $this->apiKey = config('services.sms.api_key');
-        $this->senderId = config('services.sms.sender_id');
+        $this->baseUrl = rtrim(config('services.sms.base_url', 'https://smsapi.chatbiz.net/v1'), '/');
+        $this->userId = (string) config('services.sms.user_id');
+        $this->apiKey = (string) config('services.sms.api_key');
+        $this->senderId = (string) config('services.sms.sender_id');
     }
 
-    // Send Single SMS
-    public function sendSms($recipient, $message)
+    // Single SMS
+    public function sendSms(string $recipient, string $message): array
     {
         try {
             $recipient = $this->formatNumber($recipient);
 
-            $tests = [];
+            $response = Http::asForm()
+                ->timeout(15)
+                ->post("{$this->baseUrl}/send", [
+                    'user_id' => $this->userId,
+                    'api_key' => $this->apiKey,
+                    'sender_id' => $this->senderId,
+                    'recipient_contact_no' => $recipient,
+                    'message' => $message,
+                ]);
 
-            $tests['get_send_no_slash'] = Http::timeout(10)->get('https://smsapi.chatbiz.net/v1/send', [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-                'sender_id' => $this->senderId,
-                'recipient_contact_no' => $recipient,
-                'message' => $message,
-            ]);
-
-            $tests['get_send_with_slash'] = Http::timeout(10)->get('https://smsapi.chatbiz.net/v1/send/', [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-                'sender_id' => $this->senderId,
-                'recipient_contact_no' => $recipient,
-                'message' => $message,
-            ]);
-
-            $tests['post_send_no_slash'] = Http::asForm()->timeout(10)->post('https://smsapi.chatbiz.net/v1/send', [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-                'sender_id' => $this->senderId,
-                'recipient_contact_no' => $recipient,
-                'message' => $message,
-            ]);
-
-            $tests['post_send_with_slash'] = Http::asForm()->timeout(10)->post('https://smsapi.chatbiz.net/v1/send/', [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-                'sender_id' => $this->senderId,
-                'recipient_contact_no' => $recipient,
-                'message' => $message,
-            ]);
-
-            return [
-                'get_send_no_slash' => [
-                    'status' => $tests['get_send_no_slash']->status(),
-                    'body' => $tests['get_send_no_slash']->body(),
-                ],
-                'get_send_with_slash' => [
-                    'status' => $tests['get_send_with_slash']->status(),
-                    'body' => $tests['get_send_with_slash']->body(),
-                ],
-                'post_send_no_slash' => [
-                    'status' => $tests['post_send_no_slash']->status(),
-                    'body' => $tests['post_send_no_slash']->body(),
-                ],
-                'post_send_with_slash' => [
-                    'status' => $tests['post_send_with_slash']->status(),
-                    'body' => $tests['post_send_with_slash']->body(),
-                ],
-            ];
+            return $this->buildResponse($response);
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
+            return $this->exceptionResponse($e);
         }
     }
 
     // Bulk SMS
-    public function sendBulkSms($numbers, $message, $campaign = 'LaravelCampaign')
+    public function sendBulkSms(array $numbers, string $message, string $campaign = 'LaravelCampaign'): array
     {
         try {
-            $formattedNumbers = [];
+            $formattedNumbers = array_map(fn($number) => $this->formatNumber((string) $number), $numbers);
 
-            foreach ($numbers as $number) {
-                $formattedNumbers[] = $this->formatNumber($number);
-            }
+            $response = Http::asForm()
+                ->timeout(20)
+                ->post("{$this->baseUrl}/bulk", [
+                    'user_id' => $this->userId,
+                    'api_key' => $this->apiKey,
+                    'sender_id' => $this->senderId,
+                    'campaign_name' => $campaign,
+                    'message' => $message,
+                    'recipient_contact_no' => implode(',', $formattedNumbers),
+                ]);
 
-            $response = Http::asForm()->timeout(20)->post("{$this->baseUrl}/bulk/", [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-                'sender_id' => $this->senderId,
-                'campaign_name' => $campaign,
-                'message' => $message,
-                'recipient_contact_no' => implode(',', $formattedNumbers),
-            ]);
-
-            return $response->json();
+            return $this->buildResponse($response);
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
+            return $this->exceptionResponse($e);
         }
     }
 
-    // Send OTP
-    public function sendOtp($number)
+    // OTP SMS
+    public function sendOtp(string $number): array
     {
-        $otp = random_int(100000, 999999);
-
+        $otp = (string) random_int(100000, 999999);
         $message = "Your verification code is: {$otp}";
 
-        $response = $this->sendSms($number, $message);
+        $smsResponse = $this->sendSms($number, $message);
 
         return [
+            'success' => $smsResponse['success'] ?? false,
             'otp' => $otp,
-            'sms_response' => $response,
+            'sms_response' => $smsResponse,
         ];
     }
 
-    // Get Balance
-    public function getBalance()
+    // Balance
+    public function getBalance(): array
     {
         try {
-            $response = Http::timeout(10)->get("{$this->baseUrl}/getBalance/", [
-                'user_id' => $this->userId,
-                'api_key' => $this->apiKey,
-            ]);
+            $response = Http::asForm()
+                ->timeout(15)
+                ->get("{$this->baseUrl}/getBalance", [
+                    'user_id' => $this->userId,
+                    'api_key' => $this->apiKey,
+                ]);
 
-            return $response->json();
+            return $this->buildResponse($response);
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
+            return $this->exceptionResponse($e);
         }
     }
 
-    // Format Sri Lanka numbers
-    private function formatNumber($number)
+    private function buildResponse($response): array
     {
-        $number = preg_replace('/\s+/', '', trim($number));
+        $body = $response->json();
+
+        if (!is_array($body)) {
+            return [
+                'success' => false,
+                'http_status' => $response->status(),
+                'error' => 'Invalid response from SMS provider',
+                'body' => $response->body(),
+            ];
+        }
+
+        return [
+            'success' => $response->successful(),
+            'http_status' => $response->status(),
+            'data' => $body,
+        ];
+    }
+
+    private function exceptionResponse(\Throwable $e): array
+    {
+        return [
+            'success' => false,
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    // Format Sri Lanka numbers
+    private function formatNumber(string $number): string
+    {
+        $number = preg_replace('/\D+/', '', trim($number));
 
         if (str_starts_with($number, '0')) {
             return '94' . substr($number, 1);
         }
 
-        if (str_starts_with($number, '+94')) {
-            return substr($number, 1);
+        if (str_starts_with($number, '94')) {
+            return $number;
         }
 
         return $number;
