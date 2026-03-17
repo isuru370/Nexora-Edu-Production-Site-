@@ -29,15 +29,15 @@ class SmsService
                 'user_id' => $this->userId,
                 'api_key' => $this->apiKey,
                 'sender_id' => $this->senderId,
-                'message' => $message,
                 'recipient_contact_no' => $recipient,
+                'message' => $message,
             ]);
 
             if (!$response->successful()) {
                 return [
                     'success' => false,
-                    'error' => 'HTTP request failed',
-                    'status_code' => $response->status(),
+                    'http_status' => $response->status(),
+                    'body' => $response->body(),
                 ];
             }
 
@@ -72,8 +72,8 @@ class SmsService
             if (!$response->successful()) {
                 return [
                     'success' => false,
-                    'error' => 'HTTP request failed',
-                    'status_code' => $response->status(),
+                    'http_status' => $response->status(),
+                    'body' => $response->body(),
                 ];
             }
 
@@ -86,10 +86,10 @@ class SmsService
         }
     }
 
-    // Send OTP SMS
+    // Send OTP
     public function sendOtp($number)
     {
-        $otp = $this->generateOtp();
+        $otp = random_int(100000, 999999);
 
         $message = "Your verification code is: {$otp}";
 
@@ -101,13 +101,7 @@ class SmsService
         ];
     }
 
-    // Generate 6 digit OTP
-    private function generateOtp()
-    {
-        return random_int(100000, 999999);
-    }
-
-    // Get SMS Balance
+    // Get Balance
     public function getBalance()
     {
         try {
@@ -119,8 +113,8 @@ class SmsService
             if (!$response->successful()) {
                 return [
                     'success' => false,
-                    'error' => 'HTTP request failed',
-                    'status_code' => $response->status(),
+                    'http_status' => $response->status(),
+                    'body' => $response->body(),
                 ];
             }
 
@@ -136,7 +130,7 @@ class SmsService
     // Format Sri Lanka numbers
     private function formatNumber($number)
     {
-        $number = trim($number);
+        $number = preg_replace('/\s+/', '', trim($number));
 
         if (str_starts_with($number, '0')) {
             return '94' . substr($number, 1);
