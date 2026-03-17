@@ -19,13 +19,13 @@ class SmsService
         $this->senderId = config('services.sms.sender_id');
     }
 
-    // Single SMS
+    // Send Single SMS
     public function sendSms($recipient, $message)
     {
         try {
             $recipient = $this->formatNumber($recipient);
 
-            $response = Http::timeout(10)->get("{$this->baseUrl}/send/", [
+            $response = Http::timeout(10)->get("{$this->baseUrl}/send", [
                 'user_id' => $this->userId,
                 'api_key' => $this->apiKey,
                 'sender_id' => $this->senderId,
@@ -33,15 +33,12 @@ class SmsService
                 'message' => $message,
             ]);
 
-            if (!$response->successful()) {
-                return [
-                    'success' => false,
-                    'http_status' => $response->status(),
-                    'body' => $response->body(),
-                ];
-            }
-
-            return $response->json();
+            // Debug return (remove later if needed)
+            return [
+                'http_status' => $response->status(),
+                'body' => $response->body(),
+                'json' => $response->json(),
+            ];
         } catch (\Throwable $e) {
             return [
                 'success' => false,
@@ -68,14 +65,6 @@ class SmsService
                 'message' => $message,
                 'recipient_contact_no' => implode(',', $formattedNumbers),
             ]);
-
-            if (!$response->successful()) {
-                return [
-                    'success' => false,
-                    'http_status' => $response->status(),
-                    'body' => $response->body(),
-                ];
-            }
 
             return $response->json();
         } catch (\Throwable $e) {
@@ -109,14 +98,6 @@ class SmsService
                 'user_id' => $this->userId,
                 'api_key' => $this->apiKey,
             ]);
-
-            if (!$response->successful()) {
-                return [
-                    'success' => false,
-                    'http_status' => $response->status(),
-                    'body' => $response->body(),
-                ];
-            }
 
             return $response->json();
         } catch (\Throwable $e) {
