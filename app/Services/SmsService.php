@@ -97,25 +97,38 @@ class SmsService
     }
 
     private function buildResponse($response): array
-    {
-        $body = $response->json();
+{
+    $body = $response->json();
 
-        if (!is_array($body)) {
-            return [
-                'success' => false,
-                'http_status' => $response->status(),
-                'error' => 'Invalid response from SMS provider',
-                'body' => $response->body(),
-            ];
-        }
-
+    if (!is_array($body)) {
         return [
-            'success' => $response->successful(),
+            'success' => false,
             'http_status' => $response->status(),
+            'error' => 'Invalid response from SMS provider',
+            'body' => $response->body(),
+        ];
+    }
+
+    $providerStatusCode = $body['status_code'] ?? null;
+
+    if ($providerStatusCode == 211) {
+        return [
+            'success' => false,
+            'http_status' => $response->status(),
+            'provider_status_code' => 211,
+            'error' => 'No Sender ID / Sender ID is not approved',
             'data' => $body,
         ];
     }
 
+    return [
+        'success' => $response->successful(),
+        'http_status' => $response->status(),
+        'provider_status_code' => $providerStatusCode,
+        'data' => $body,
+    ];
+}
+    
     private function exceptionResponse(\Throwable $e): array
     {
         return [
