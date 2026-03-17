@@ -6,46 +6,85 @@ use Illuminate\Support\Facades\Http;
 
 class SmsService
 {
+    protected string $baseUrl;
+    protected string $userId;
+    protected string $apiKey;
+    protected string $senderId;
+
+    public function __construct()
+    {
+        $this->baseUrl = 'https://smsapi.chatbiz.net/v1';
+        $this->userId = config('services.sms.user_id');
+        $this->apiKey = config('services.sms.api_key');
+        $this->senderId = config('services.sms.sender_id');
+    }
 
     // Single SMS
     public function sendSms($recipient, $message)
     {
-        $recipient = $this->formatNumber($recipient);
+        try {
+            $recipient = $this->formatNumber($recipient);
 
-        $response = Http::get('https://smsapi.chatbiz.net/v1/send/', [
-            'user_id' => env('SMS_USER_ID'),
-            'api_key' => env('SMS_API_KEY'),
-            'sender_id' => env('SMS_SENDER_ID'),
-            'message' => $message,
-            'recipient_contact_no' => $recipient
-        ]);
+            $response = Http::timeout(10)->get("{$this->baseUrl}/send/", [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'message' => $message,
+                'recipient_contact_no' => $recipient,
+            ]);
 
-        return $response->json();
+            if (!$response->successful()) {
+                return [
+                    'success' => false,
+                    'error' => 'HTTP request failed',
+                    'status_code' => $response->status(),
+                ];
+            }
+
+            return $response->json();
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
     }
-
 
     // Bulk SMS
-    public function sendBulkSms($numbers, $message, $campaign = "LaravelCampaign")
+    public function sendBulkSms($numbers, $message, $campaign = 'LaravelCampaign')
     {
+        try {
+            $formattedNumbers = [];
 
-        $formattedNumbers = [];
+            foreach ($numbers as $number) {
+                $formattedNumbers[] = $this->formatNumber($number);
+            }
 
-        foreach ($numbers as $number) {
-            $formattedNumbers[] = $this->formatNumber($number);
+            $response = Http::asForm()->timeout(20)->post("{$this->baseUrl}/bulk/", [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'campaign_name' => $campaign,
+                'message' => $message,
+                'recipient_contact_no' => implode(',', $formattedNumbers),
+            ]);
+
+            if (!$response->successful()) {
+                return [
+                    'success' => false,
+                    'error' => 'HTTP request failed',
+                    'status_code' => $response->status(),
+                ];
+            }
+
+            return $response->json();
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
         }
-
-        $response = Http::asForm()->post('https://smsapi.chatbiz.net/v1/bulk/', [
-            'user_id' => env('SMS_USER_ID'),
-            'api_key' => env('SMS_API_KEY'),
-            'sender_id' => env('SMS_SENDER_ID'),
-            'campaign_name' => $campaign,
-            'message' => $message,
-            'recipient_contact_no' => implode(',', $formattedNumbers)
-        ]);
-
-        return $response->json();
     }
-
 
     // Send OTP SMS
     public function sendOtp($number)
@@ -58,33 +97,47 @@ class SmsService
 
         return [
             'otp' => $otp,
-            'sms_response' => $response
+            'sms_response' => $response,
         ];
     }
-
 
     // Generate 6 digit OTP
     private function generateOtp()
     {
-        return rand(100000, 999999);
+        return random_int(100000, 999999);
     }
-
 
     // Get SMS Balance
     public function getBalance()
     {
-        $response = Http::get('https://smsapi.chatbiz.net/v1/getBalance/', [
-            'user_id' => env('SMS_USER_ID'),
-            'api_key' => env('SMS_API_KEY')
-        ]);
+        try {
+            $response = Http::timeout(10)->get("{$this->baseUrl}/getBalance/", [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+            ]);
 
-        return $response->json();
+            if (!$response->successful()) {
+                return [
+                    'success' => false,
+                    'error' => 'HTTP request failed',
+                    'status_code' => $response->status(),
+                ];
+            }
+
+            return $response->json();
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
     }
-
 
     // Format Sri Lanka numbers
     private function formatNumber($number)
     {
+        $number = trim($number);
+
         if (str_starts_with($number, '0')) {
             return '94' . substr($number, 1);
         }
