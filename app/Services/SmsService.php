@@ -25,7 +25,9 @@ class SmsService
         try {
             $recipient = $this->formatNumber($recipient);
 
-            $response = Http::timeout(10)->get("{$this->baseUrl}/send", [
+            $tests = [];
+
+            $tests['get_send_no_slash'] = Http::timeout(10)->get('https://smsapi.chatbiz.net/v1/send', [
                 'user_id' => $this->userId,
                 'api_key' => $this->apiKey,
                 'sender_id' => $this->senderId,
@@ -33,11 +35,47 @@ class SmsService
                 'message' => $message,
             ]);
 
-            // Debug return (remove later if needed)
+            $tests['get_send_with_slash'] = Http::timeout(10)->get('https://smsapi.chatbiz.net/v1/send/', [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'recipient_contact_no' => $recipient,
+                'message' => $message,
+            ]);
+
+            $tests['post_send_no_slash'] = Http::asForm()->timeout(10)->post('https://smsapi.chatbiz.net/v1/send', [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'recipient_contact_no' => $recipient,
+                'message' => $message,
+            ]);
+
+            $tests['post_send_with_slash'] = Http::asForm()->timeout(10)->post('https://smsapi.chatbiz.net/v1/send/', [
+                'user_id' => $this->userId,
+                'api_key' => $this->apiKey,
+                'sender_id' => $this->senderId,
+                'recipient_contact_no' => $recipient,
+                'message' => $message,
+            ]);
+
             return [
-                'http_status' => $response->status(),
-                'body' => $response->body(),
-                'json' => $response->json(),
+                'get_send_no_slash' => [
+                    'status' => $tests['get_send_no_slash']->status(),
+                    'body' => $tests['get_send_no_slash']->body(),
+                ],
+                'get_send_with_slash' => [
+                    'status' => $tests['get_send_with_slash']->status(),
+                    'body' => $tests['get_send_with_slash']->body(),
+                ],
+                'post_send_no_slash' => [
+                    'status' => $tests['post_send_no_slash']->status(),
+                    'body' => $tests['post_send_no_slash']->body(),
+                ],
+                'post_send_with_slash' => [
+                    'status' => $tests['post_send_with_slash']->status(),
+                    'body' => $tests['post_send_with_slash']->body(),
+                ],
             ];
         } catch (\Throwable $e) {
             return [
