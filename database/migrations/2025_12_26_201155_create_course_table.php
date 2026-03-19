@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
-class CreateCourseTable extends Migration
+class CreateCoursesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,23 +14,41 @@ class CreateCourseTable extends Migration
      */
     public function up()
     {
-        Schema::create('course', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('course_code', 20)->unique();
             $table->string('course_name', 100);
             $table->text('description')->nullable();
+
             $table->decimal('total_fee', 10, 2)->default(0.00);
             $table->decimal('compulsory_payment', 10, 2)->default(0.00);
-            $table->integer('duration_months');
-            $table->decimal('monthly_payment', 10, 2)->storedAs('(total_fee - compulsory_payment) / duration_months');
+
+            $table->unsignedInteger('duration_months');
+
             $table->string('lecturer', 100)->nullable();
             $table->string('department', 50)->nullable();
+
             $table->enum('status', ['active', 'inactive', 'archived'])->default('active');
-            $table->integer('max_students')->nullable();
+
+            $table->unsignedInteger('max_students')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+
             $table->timestamps();
         });
+
+        // generated column safely
+        DB::statement("
+            ALTER TABLE courses
+            ADD COLUMN monthly_payment DECIMAL(10,2)
+            GENERATED ALWAYS AS (
+                CASE
+                    WHEN duration_months > 0
+                    THEN ROUND((total_fee - compulsory_payment) / duration_months, 2)
+                    ELSE 0
+                END
+            ) STORED
+        ");
     }
 
     /**
@@ -39,6 +58,6 @@ class CreateCourseTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('course');
+        Schema::dropIfExists('courses');
     }
 }

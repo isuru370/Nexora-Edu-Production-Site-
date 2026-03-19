@@ -11,6 +11,7 @@ use App\Http\Controllers\ClassCategoryController;
 use App\Http\Controllers\ClassCategoryHasStudentClassController;
 use App\Http\Controllers\ClassHallsController;
 use App\Http\Controllers\ClassRoomController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\LedgerSummaryController;
 use App\Http\Controllers\StudentController;
@@ -410,5 +411,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/monthly/{yearMonth}', [LedgerSummaryController::class, 'getMonthlySummary'])
             ->where('yearMonth', '[0-9]{4}-[0-9]{2}');
         Route::get('/test/{yearMonth}', [LedgerSummaryController::class, 'testMonth']);
+    });
+
+
+
+    // courses API
+    Route::prefix('courses')->group(function () {
+        Route::get('/', [CourseController::class, 'index']);
+        Route::post('/', [CourseController::class, 'store']);
+        Route::get('{id}', [CourseController::class, 'show']);
+        Route::put('/{id}', [CourseController::class, 'update']);
+        Route::delete('/{id}', [CourseController::class, 'destroy']);
+        Route::patch('/{id}/status', [CourseController::class, 'changeStatus']);
     });
 });
