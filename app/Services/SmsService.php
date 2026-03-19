@@ -1,8 +1,8 @@
+
 <?php
 
 namespace App\Services;
 
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class SmsService
@@ -11,23 +11,6 @@ class SmsService
     protected string $userId;
     protected string $apiKey;
     protected string $senderId;
-
-    private const STATUS_MESSAGES = [
-        201 => 'Sender ID API Status is Inactive',
-        202 => 'Invalid API Key',
-        203 => 'Contact Number is Invalid or Operator not Support',
-        204 => 'Successfully Sent the Message',
-        205 => 'Length of Contact is Invalid',
-        206 => 'Country is not Available for Sending SMS',
-        207 => 'No Contact Numbers',
-        208 => 'Account Balance is Insufficient',
-        209 => 'Sending the Message is Unsuccessful',
-        210 => 'Client is Suspended',
-        211 => 'No Sender ID / Sender ID is not Approved',
-        212 => 'Rate Card is not Set for the Country',
-        213 => 'Route is not Set for the Country',
-        214 => 'API Maintenance',
-    ];
 
     public function __construct()
     {
@@ -51,20 +34,26 @@ class SmsService
                 'message' => $message,
             ]);
 
-            return $this->buildResponse($response);
+            return [
+                'success' => ($response->json()['status_code'] ?? null) == 204,
+                'http_status' => $response->status(),
+                'provider_status_code' => $response->json()['status_code'] ?? null,
+                'message_id' => $response->json()['msg_id'] ?? null,
+                'body' => $response->body(),
+                'json' => $response->json(),
+            ];
         } catch (\Throwable $e) {
-            return $this->exceptionResponse($e);
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
         }
     }
-
     // Bulk SMS
     public function sendBulkSms(array $numbers, string $message, string $campaign = 'LaravelCampaign'): array
     {
         try {
-            $formattedNumbers = array_map(
-                fn($number) => $this->formatNumber((string) $number),
-                $numbers
-            );
+            $formattedNumbers = array_map(fn($number) => $this->formatNumber((string) $number), $numbers);
 
             $response = Http::asForm()
                 ->timeout(20)
@@ -115,52 +104,43 @@ class SmsService
         }
     }
 
-    private function buildResponse(Response $response): array
+    private function buildResponse($response): array
     {
-        $json = $response->json();
+        $body = $response->json();
 
-        if (!is_array($json)) {
+        if (!is_array($body)) {
             return [
                 'success' => false,
                 'http_status' => $response->status(),
-                'provider_status_code' => null,
-                'provider_message' => 'Invalid response from SMS provider',
-                'message_id' => null,
+                'error' => 'Invalid response from SMS provider',
                 'body' => $response->body(),
-                'json' => null,
             ];
         }
 
-        $providerStatusCode = isset($json['status_code']) ? (int) $json['status_code'] : null;
-        $providerMessage = $this->getStatusMessage($providerStatusCode);
-        $messageId = $json['msg_id'] ?? $json['message_id'] ?? null;
+        $providerStatusCode = $body['status_code'] ?? null;
+
+        if ($providerStatusCode == 211) {
+            return [
+                'success' => false,
+                'http_status' => $response->status(),
+                'provider_status_code' => 211,
+                'error' => 'No Sender ID / Sender ID is not approved',
+                'data' => $body,
+            ];
+        }
 
         return [
-            'success' => $providerStatusCode === 204,
+            'success' => $response->successful(),
             'http_status' => $response->status(),
             'provider_status_code' => $providerStatusCode,
-            'provider_message' => $providerMessage,
-            'message_id' => $messageId,
-            'body' => $response->body(),
-            'json' => $json,
+            'data' => $body,
         ];
-    }
-
-    private function getStatusMessage(?int $statusCode): string
-    {
-        return self::STATUS_MESSAGES[$statusCode] ?? 'Unknown provider status';
     }
 
     private function exceptionResponse(\Throwable $e): array
     {
         return [
             'success' => false,
-            'http_status' => null,
-            'provider_status_code' => null,
-            'provider_message' => 'Application error',
-            'message_id' => null,
-            'body' => null,
-            'json' => null,
             'error' => $e->getMessage(),
         ];
     }
