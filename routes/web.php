@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassAttendanceController;
 use App\Http\Controllers\ClassHallsController;
 use App\Http\Controllers\ClassRoomController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\SystemUserController;
 use App\Http\Controllers\UserTypesController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentIdCardController;
+use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherLedgerSummaryController;
 use App\Http\Controllers\TeacherPaymentsController;
@@ -305,5 +307,26 @@ Route::middleware(['auth', 'check.permission'])->group(function () {
 
     Route::prefix('permission')->name('permission.')->group(function () {
         Route::get('/{userId}', [PageController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('courses')->name('courses.')->group(function () {
+        Route::get('/', [CourseController::class, 'indexPage'])->name('index');
+        Route::get('/create', [CourseController::class, 'createPage'])->name('create');
+        Route::post('/', [CourseController::class, 'store'])->name('store');
+
+        Route::get('/{id}/edit', [CourseController::class, 'editPage'])->name('edit');
+        Route::get('/{id}', [CourseController::class, 'show'])->name('show');
+
+        Route::put('/{id}', [CourseController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CourseController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/status', [CourseController::class, 'changeStatus'])->name('changeStatus');
+    });
+
+    Route::prefix('student-registrations')->name('student-registrations.')->group(function () {
+        Route::get('/create', [StudentRegistrationController::class, 'createPage'])->name('create');
+        Route::post('/', [StudentRegistrationController::class, 'store'])->name('store');
+
+        Route::get('/bulk-create', [StudentRegistrationController::class, 'bulkCreatePage'])->name('bulk-create');
+        Route::post('/bulk-store', [StudentRegistrationController::class, 'bulkStore'])->name('bulk-store');
     });
 });

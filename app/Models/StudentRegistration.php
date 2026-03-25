@@ -44,29 +44,57 @@ class StudentRegistration extends Model
         'course_start_date' => 'date',
         'course_end_date' => 'date',
         'next_payment_date' => 'date',
+        'months_remaining' => 'integer',
+        'remaining_balance' => 'decimal:2',
     ];
 
-    /**
-     * Registration belongs to one student
-     */
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id');
     }
 
-    /**
-     * Registration belongs to one course
-     */
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
 
-    /**
-     * One registration has many payments
-     */
     public function payments()
     {
         return $this->hasMany(StudentCoursePayment::class, 'registration_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereIn('registration_status', ['registered', 'in_progress']);
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('registration_status', 'completed');
+    }
+
+    public function scopeDropped($query)
+    {
+        return $query->where('registration_status', 'dropped');
+    }
+
+    public function scopePendingPayments($query)
+    {
+        return $query->whereIn('payment_status', ['pending', 'overdue']);
+    }
+
+    public function getIsCompletedAttribute()
+    {
+        return $this->registration_status === 'completed';
+    }
+
+    public function getIsDroppedAttribute()
+    {
+        return $this->registration_status === 'dropped';
+    }
+
+    public function getIsActiveAttribute()
+    {
+        return in_array($this->registration_status, ['registered', 'in_progress'], true);
     }
 }

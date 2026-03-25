@@ -93,4 +93,9 @@ class Student extends Model
     {
         return $this->permanent_qr_active;
     }
+
+    public function registrations()
+    {
+        return $this->hasMany(StudentRegistration::class, 'student_id');
+    }
 }
