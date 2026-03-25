@@ -3,25 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Services\CourseService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Throwable;
 
 class CourseController extends Controller
 {
-    public function __construct(
-        private CourseService $courseService
-    ) {
+    protected $courseService;
+
+    public function __construct(CourseService $courseService)
+    {
+        $this->courseService = $courseService;
     }
 
-    /**
-     * Display a listing of courses.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function index(Request $request): JsonResponse
+    public function indexPage(Request $request)
     {
         try {
             $filters = $request->only([
@@ -30,185 +26,130 @@ class CourseController extends Controller
                 'department',
             ]);
 
-            $perPage = $request->integer('per_page', 15);
+            $courses = $this->courseService->getAll($filters, 15);
 
-            $courses = $this->courseService->getAll($filters, $perPage);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Courses retrieved successfully.',
-                'data' => $courses,
-            ]);
+            return view('courses.index', compact('courses'));
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve courses.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to load courses.');
         }
     }
 
-    /**
-     * Store a newly created course.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function store(Request $request): JsonResponse
+    public function createPage()
+    {
+        return view('courses.create');
+    }
+
+    public function store(Request $request)
     {
         try {
-            $course = $this->courseService->create($request->all());
+            $this->courseService->create($request->all());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Course created successfully.',
-                'data' => $course,
-            ], 201);
+            return redirect()
+                ->route('courses.index')
+                ->with('success', 'Course created successfully.');
         } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => $e->getMessage()]);
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create course.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Failed to create course.']);
         }
     }
 
-    /**
-     * Display the specified course.
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function show(int $id): JsonResponse
+    public function show(int $id)
+{
+    try {
+        $course = $this->courseService->getById($id);
+
+        return view('courses.show', compact('course'));
+    } catch (ModelNotFoundException $e) {
+        return redirect()
+            ->route('courses.index')
+            ->with('error', 'Course not found.');
+    } catch (Throwable $e) {
+        return redirect()
+            ->route('courses.index')
+            ->with('error', 'Something went wrong while loading the course details.');
+    }
+}
+
+    public function editPage(int $id)
     {
         try {
             $course = $this->courseService->getById($id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Course retrieved successfully.',
-                'data' => $course,
-            ]);
+            return view('courses.edit', compact('course'));
         } catch (Throwable $e) {
-            $statusCode = str_contains($e->getMessage(), 'No query results') ? 404 : 500;
-
-            return response()->json([
-                'success' => false,
-                'message' => $statusCode === 404
-                    ? 'Course not found.'
-                    : 'Failed to retrieve course.',
-                'error' => $e->getMessage(),
-            ], $statusCode);
+            return redirect()
+                ->route('courses.index')
+                ->with('error', 'Course not found.');
         }
     }
 
-    /**
-     * Update the specified course.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id)
     {
         try {
-            $course = $this->courseService->update($id, $request->all());
+            $this->courseService->update($id, $request->all());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Course updated successfully.',
-                'data' => $course,
-            ]);
+            return redirect()
+                ->route('courses.index')
+                ->with('success', 'Course updated successfully.');
         } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => $e->getMessage()]);
         } catch (Throwable $e) {
-            $statusCode = str_contains($e->getMessage(), 'No query results') ? 404 : 500;
-
-            return response()->json([
-                'success' => false,
-                'message' => $statusCode === 404
-                    ? 'Course not found.'
-                    : 'Failed to update course.',
-                'error' => $e->getMessage(),
-            ], $statusCode);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Failed to update course.']);
         }
     }
 
-    /**
-     * Remove the specified course.
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id)
     {
         try {
             $this->courseService->delete($id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Course deleted successfully.',
-            ]);
+            return redirect()
+                ->route('courses.index')
+                ->with('success', 'Course deleted successfully.');
         } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+            return redirect()
+                ->route('courses.index')
+                ->with('error', $e->getMessage());
         } catch (Throwable $e) {
-            $statusCode = str_contains($e->getMessage(), 'No query results') ? 404 : 500;
-
-            return response()->json([
-                'success' => false,
-                'message' => $statusCode === 404
-                    ? 'Course not found.'
-                    : 'Failed to delete course.',
-                'error' => $e->getMessage(),
-            ], $statusCode);
+            return redirect()
+                ->route('courses.index')
+                ->with('error', 'Failed to delete course.');
         }
     }
 
-    /**
-     * Change course status.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function changeStatus(Request $request, int $id): JsonResponse
+    public function changeStatus(Request $request, int $id)
     {
         try {
             $status = $request->input('status');
 
-            $course = $this->courseService->changeStatus($id, $status);
+            $this->courseService->changeStatus($id, $status);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Course status updated successfully.',
-                'data' => $course,
-            ]);
+            return redirect()
+                ->route('courses.index')
+                ->with('success', 'Course status updated successfully.');
         } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+            return redirect()
+                ->route('courses.index')
+                ->with('error', $e->getMessage());
         } catch (Throwable $e) {
-            $statusCode = str_contains($e->getMessage(), 'No query results') ? 404 : 500;
-
-            return response()->json([
-                'success' => false,
-                'message' => $statusCode === 404
-                    ? 'Course not found.'
-                    : 'Failed to change course status.',
-                'error' => $e->getMessage(),
-            ], $statusCode);
+            return redirect()
+                ->route('courses.index')
+                ->with('error', 'Failed to change course status.');
         }
     }
 }

@@ -14,11 +14,12 @@ class Course extends Model
     protected $fillable = [
         'course_code',
         'course_name',
+        'teacher_percentage',
         'description',
         'total_fee',
         'compulsory_payment',
         'duration_months',
-        'lecturer',
+        'teacher_id',
         'department',
         'status',
         'max_students',
@@ -27,19 +28,29 @@ class Course extends Model
     ];
 
     protected $casts = [
+        'teacher_percentage' => 'decimal:2',
         'total_fee' => 'decimal:2',
         'compulsory_payment' => 'decimal:2',
+        'monthly_payment' => 'decimal:2',
         'duration_months' => 'integer',
+        'teacher_id' => 'integer',
         'max_students' => 'integer',
         'start_date' => 'date',
         'end_date' => 'date',
     ];
 
-    /**
-     * One course has many student registrations
-     */
     public function registrations()
     {
         return $this->hasMany(StudentRegistration::class, 'course_id');
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_id');
+    }
+
+    public function getInstitutePercentageAttribute()
+    {
+        return round(100 - (float) $this->teacher_percentage, 2);
     }
 }

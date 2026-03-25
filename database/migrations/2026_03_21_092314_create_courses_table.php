@@ -7,29 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class CreateCoursesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('course_code', 20)->unique();
             $table->string('course_name', 100);
+            $table->decimal('teacher_percentage', 5, 2)->default(100.00);
             $table->text('description')->nullable();
 
             $table->decimal('total_fee', 10, 2)->default(0.00);
             $table->decimal('compulsory_payment', 10, 2)->default(0.00);
-
             $table->unsignedInteger('duration_months');
 
-            $table->string('lecturer', 100)->nullable();
+            $table->foreignId('teacher_id')->constrained('teachers')->restrictOnDelete();
+
             $table->string('department', 50)->nullable();
-
             $table->enum('status', ['active', 'inactive', 'archived'])->default('active');
-
             $table->unsignedInteger('max_students')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
@@ -37,7 +31,6 @@ class CreateCoursesTable extends Migration
             $table->timestamps();
         });
 
-        // generated column safely
         DB::statement("
             ALTER TABLE courses
             ADD COLUMN monthly_payment DECIMAL(10,2)
@@ -51,11 +44,6 @@ class CreateCoursesTable extends Migration
         ");
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('courses');

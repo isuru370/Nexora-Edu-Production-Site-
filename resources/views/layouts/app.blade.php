@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <title>@yield('title', 'Student Management System')</title>
 
     <!-- Bootstrap 5 CSS -->
@@ -613,6 +614,53 @@
                     </div>
                 </li>
 
+                <!-- Courses -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#coursesSubmenu" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="coursesSubmenu">
+                        <i class="fas fa-book"></i> <span>Manage Courses</span>
+                    </a>
+
+                    <div class="collapse {{ request()->routeIs('courses.*') || request()->routeIs('student-registrations.*') ? 'show' : '' }}"
+                        id="coursesSubmenu">
+
+                        <ul class="nav flex-column ms-3">
+
+                            <!-- Course Section -->
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('courses.create') ? 'active' : '' }}"
+                                    href="{{ route('courses.create') }}">
+                                    <i class="fas fa-plus-circle"></i> Add New Course
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('courses.index') ? 'active' : '' }}"
+                                    href="{{ route('courses.index') }}">
+                                    <i class="fas fa-list"></i> View All Courses
+                                </a>
+                            </li>
+
+                            <hr class="text-muted my-2">
+
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('student-registrations.create') ? 'active' : '' }}"
+                                    href="{{ route('student-registrations.create') }}">
+                                    <i class="fas fa-user-plus"></i> Single Registration
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('student-registrations.bulk-create') ? 'active' : '' }}"
+                                    href="{{ route('student-registrations.bulk-create') }}">
+                                    <i class="fas fa-users"></i> Bulk Registration
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#financialMenu" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="financialMenu">
@@ -753,7 +801,7 @@
                         href="{{ route('reports.index') }}">
                         <i class="fas fa-chart-bar"></i> <span>Reports</span>
                     </a>
-                </li> 
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}"
                         href="{{ route('settings.index') }}">

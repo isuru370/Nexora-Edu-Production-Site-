@@ -28,6 +28,7 @@ use App\Services\ReportService;
 use App\Services\StudentAdmissionPaymentService;
 use App\Services\StudentClassSeparateService;
 use App\Services\StudentIdCardService;
+use App\Services\StudentRegistrationService;
 use App\Services\StudentService;
 use App\Services\StudentStudentStudentClassService;
 use App\Services\SubjectService;
@@ -149,6 +150,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(CourseService::class, function ($app) {
             return new CourseService();
+        });
+        $this->app->bind(StudentRegistrationService::class, function ($app) {
+            return new StudentRegistrationService();
         });
     }
 
