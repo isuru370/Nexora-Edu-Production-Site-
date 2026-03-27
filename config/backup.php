@@ -30,11 +30,11 @@ return [
         'database_dump_file_extension' => '',
 
         'database_dump' => [
-            'dump_binary_path' => '',
+            'dump_binary_path' => '/usr/bin',
             'use_single_transaction' => true,
             'timeout' => 60 * 5,
             'exclude_tables' => [],
-            'add_extra_option' => '--skip-ssl --protocol=tcp',
+            'add_extra_option' => '--skip-ssl',
         ],
 
         'destination' => [
