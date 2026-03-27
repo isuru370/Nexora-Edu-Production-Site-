@@ -22,12 +22,20 @@ return [
             ],
 
             'databases' => [
-                'mysql', // Only connection names as strings
+                'mysql',
             ],
         ],
 
         'database_dump_compressor' => null,
         'database_dump_file_extension' => '',
+
+        'database_dump' => [
+            'dump_binary_path' => '',
+            'use_single_transaction' => true,
+            'timeout' => 60 * 5,
+            'exclude_tables' => [],
+            'add_extra_option' => '--ssl-mode=DISABLED',
+        ],
 
         'destination' => [
             'filename_prefix' => '',
@@ -42,7 +50,6 @@ return [
         'encryption' => 'default',
     ],
 
-    // 🔹 Notifications completely disabled
     'notifications' => [
         'notifications' => [],
     ],
