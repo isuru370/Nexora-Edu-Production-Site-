@@ -34,7 +34,7 @@ return [
             'use_single_transaction' => true,
             'timeout' => 60 * 5,
             'exclude_tables' => [],
-            'add_extra_option' => '--ssl-mode=DISABLED',
+            'add_extra_option' => '--skip-ssl',
         ],
 
         'destination' => [
