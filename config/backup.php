@@ -29,12 +29,9 @@ return [
         'database_dump_compressor' => null,
         'database_dump_file_extension' => '',
 
-        'database_dump' => [
-            'dump_binary_path' => '/usr/bin',
-            'use_single_transaction' => true,
-            'timeout' => 60 * 5,
-            'exclude_tables' => [],
-            'add_extra_option' => '--skip-ssl',
+        // 🔥 FIX FOR COOLIFY MYSQL (SELF-SIGNED SSL)
+        'dump' => [
+            'add_extra_option' => '--ssl-mode=DISABLED',
         ],
 
         'destination' => [
@@ -50,6 +47,7 @@ return [
         'encryption' => 'default',
     ],
 
+    // 🔕 Notifications disabled (prevents error you had)
     'notifications' => [
         'notifications' => [],
     ],
